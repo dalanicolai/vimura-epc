@@ -1,1 +1,55 @@
 #+TITLE: Vimura-epc
+
+
+This package provides an alternative to the great [[https://github.com/politza/pdf-tool][pdf-tools]] (maintenance
+transferred to [[https://github.com/vedang/pdf-tools][vedang/pdftools]]). There are two main differences between this
+package and =pdf-tools= its approach (although the approach was heavily inspired
+by =pdf-tools=):
+
+*1.* Instead of using the =epdfinfo= server this package uses [[https://pypi.org/project/PyMuPDF/][pymupdf]] via
+[[https://github.com/tkf/python-epc][python-epc]] making it much more hackable.
+
+*2.* The package uses svg for rendering the pages, making it easier to combine
+multiple pages into a single image, hence enabling the possibility for 'real'
+continuous scrolling.
+
+These two differences have a few more advantages:
+
+- *pymupdf* offers possibilities to add e.g. arrow [[annotations]] (see
+  [[pymupdf-mode]]) and [[https://pymupdf.readthedocs.io/en/latest/tutorial.html#inspecting-the-links-annotations-or-form-fields-of-a-page][editing form fields]] (This should be possible with poppler
+  also, but the epdfinfo server does not have it implemented.
+
+- *svg* allows for [[https://www.gnu.org/software/emacs/manual/html_node/elisp/SVG-Images.html][drawing on the image with elisp directly]], which could be handy
+when editing forms.
+
+However this is all still a far sight. The package currently is just a very
+simple basic proof of concept.
+
+** Comment
+   *speed*
+   Unfortunately, pymupdf and elisp are not blazingly fast. Therefore there is
+   some lag when first visiting a new page (probably most of the lag is due to
+   python exporting 3 svg images and subsequently emacs combining them. If the
+   package gets more mature then probably we could request the mupdf developers
+   to implement it in the c code of mupdf directly, because it is really just a
+   tiny amount of work). However, the lag is more or less eliminated after that
+   due to caching of the images, try it!:) (byte- or even native-compiling the
+   =/home/dalanicolai/git/vimura-epc/vimura-epc-client.el= also helps).
+
+   As the lag is more or less eliminated after caching, all lag could probably
+   get eliminated by caching images in advance (probably asynchronously).
+
+   *rendering*
+   Due to some some weird svg behavior (probably a svg bug), pages often do not
+   get rendered well (adding multiple times the same page(/images) to a single
+   root svg seems to always work, but when adding different pages, then often
+   later pages don't get rendered well. I will probably create a bug report for
+   it soon).
+
+* Try it out
+  To try out this package, first install [[https://pypi.org/project/PyMuPDF/][pymupdf]] (available on most GNU/linux
+  distributions or better install with =pip=). Then clone this repo and load the
+  =vimura-epc-client.el= file. Finally use =M-x find-file-literally= some pdf
+  file and then =M-x vimura-mode=.
+
+   
