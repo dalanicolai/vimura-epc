@@ -1,6 +1,24 @@
 #+TITLE: Vimura-epc
 
+** Warning
+  Unfortunately svg's turn out to use a lot of internal memory when used on full
+  screen(-width) (here =M-x-: (window-width nil t)= tells me that its 1904
+  pixels; also read explanation [[https://people.gnome.org/~federico/blog/reducing-memory-consumption-in-librsvg-1.html][here]]). Fortunately they seem to use
+  significantly less memory when used on half screen (or split window, here
+  window-width is 944 pixels). Therefore it is recommended to use this only on
+  half screen width (and maybe experiment with full screen while monitoring your
+  internal memory usage).
 
+  Because png's use less internal memory and because also this solution is not
+  so fast (before the images have been cached), I have created another test
+  using a similar approach but embedding three png's in a root svg file and
+  using the =epdfinfo= server. The result can be found [[https://github.com/dalanicolai/pdf-cscroll/blob/main/pdf-tools-cscroll.el][here]]. Installation and
+  usage are the same as for this package when replacing =vimura= with
+  =pdf-cscroll=. However, the result of this test seem to be that the
+  =vimura-epc= solution on half screen works best (especially when someone finds
+  a way to cache images in advance).
+
+* Introduction
 This package provides an alternative to the great [[https://github.com/politza/pdf-tool][pdf-tools]] (maintenance
 transferred to [[https://github.com/vedang/pdf-tools][vedang/pdftools]]). There are two main differences between this
 package and =pdf-tools= its approach (although the approach was heavily inspired

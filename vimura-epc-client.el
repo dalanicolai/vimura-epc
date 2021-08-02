@@ -16,7 +16,7 @@
 
 (defun vimura-page-svg-group (page &optional transform-height)
   "Retrieve "
-  (let ((width (x-display-pixel-width)))
+  (let ((width (window-width nil t)))
     (with-temp-buffer
       (save-excursion
         (insert (epc:call-sync my-epc 'page_svg (list page width))))
@@ -32,32 +32,31 @@
           (cons height (buffer-substring group-start (match-end 0))))))))
 
 (defun vimura-page-triplet-image-object (page)
-  (with-temp-buffer
-    (let* ((top (vimura-page-svg-group (1- page)))
-           (middle-start-height (car top))
-           (middle (vimura-page-svg-group page middle-start-height))
-           (bottom-start-height (+ (car top) (car middle)))
-           (bottom (vimura-page-svg-group (1+ page) bottom-start-height))
-           (width (x-display-pixel-width))
-           (total-height (+ (car top) (car middle) (car bottom)))
-           (svg (svg-image
-                 (svg-create width total-height))))
-      (with-temp-buffer
-        (insert (image-property svg :data))
-        (backward-char 6)
-        (insert " <rect width='100%' height='100%' fill='white'/>")
-        (insert (cdr top))
-        (insert (format "<line x1='0' y1='%s' x2='%s' y2='%s' stroke='black'/>"
-                        middle-start-height
-                        width
-                        middle-start-height))
-        (insert (cdr middle))
-        (insert (format "<line x1='0' y1='%s' x2='%s' y2='%s' stroke='black'/>"
-                        bottom-start-height
-                        width
-                        bottom-start-height))
-        (insert (cdr bottom))
-        (create-image (buffer-string) 'svg t)))))
+  (let* ((top (vimura-page-svg-group (1- page)))
+         (middle-start-height (car top))
+         (middle (vimura-page-svg-group page middle-start-height))
+         (bottom-start-height (+ (car top) (car middle)))
+         (bottom (vimura-page-svg-group (1+ page) bottom-start-height))
+         (width (window-width nil t))
+         (total-height (+ (car top) (car middle) (car bottom)))
+         (svg (svg-image
+               (svg-create width total-height))))
+    (with-temp-buffer
+      (insert (image-property svg :data))
+      (backward-char 6)
+      (insert " <rect width='100%' height='100%' fill='white'/>")
+      (insert (cdr top))
+      (insert (format "<line x1='0' y1='%s' x2='%s' y2='%s' stroke='black'/>"
+                      middle-start-height
+                      width
+                      middle-start-height))
+      (insert (cdr middle))
+      (insert (format "<line x1='0' y1='%s' x2='%s' y2='%s' stroke='black'/>"
+                      bottom-start-height
+                      width
+                      bottom-start-height))
+      (insert (cdr bottom))
+      (create-image (buffer-string) 'svg t))))
 
 (defun vimura-goto-page (page)
   (remove-overlays (point-min) (point-max))
@@ -73,7 +72,7 @@
     (setq-local image-size image-size)
     (setq-local current-triplet triplet)
     ;; (setq-local current-page page)
-    ;; (add-to-list 'vimura-cache (cons triplet page-triplet))
+    (add-to-list 'vimura-cache (cons triplet page-triplet))
     (unless (eq page 0)
       (image-set-window-vscroll (/ (cdr image-size) 3))
       (image-scroll-left))))
