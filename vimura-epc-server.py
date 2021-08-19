@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import fitz
 
 from epc.server import EPCServer
@@ -14,6 +15,7 @@ def vimura_init(doc_file):
 
 @server.register_function
 def test(page):
+    print(page)
     page = doc[page]
     pix = page.get_pixmap()
     # mag = display_width / pix.width
