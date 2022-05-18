@@ -1,5 +1,18 @@
 #+TITLE: Vimura-epc
 
+* Deprecation warning
+The server in this repository contains an early experimental version of a python
+pdf-tools server. Unlike the =epdfinfo= server, this version of the python server
+communicates via the EPC protocol (instead of using the [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Transaction-Queues.html][transaction queue]]). The
+only reason for that is that at the time of writing I knew how to use EPC but I
+did not yet learn about transaction queues. Finally, a better (faster)
+alternative python pdf-tools [[https://pypi.org/project/vimura-server/][vimura-server]] can be found at the python package
+index [[https://pypi.org/project/vimura-server/][here]].
+
+For using the vimura-server it is required to use the [[https://github.com/dalanicolai/pdf-tools/tree/production][production branch of my
+pdf-tools fork]]. After installing the fork and the server (using pip install),
+the server can be used by selecting it via =M-x pdf-tools-toggle-server=.
+
 ** Warning
   Unfortunately svg's turn out to use a lot of internal memory when used on full
   screen(-width) (here =M-x-: (window-width nil t)= tells me that its 1904
